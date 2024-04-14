@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<deploy type="" centralizedCfg="false">
+
+	<basic describe="基本信息">
+		<packType describe="包类型" options="pack:全量包;patch:补丁包">pack</packType>
+		<systemType describe="系统类型">hit-app</systemType>
+		<group describe="应用默认分组(英文)">hit</group>
+		<appType describe="服务标识">chain-app-as</appType>
+		<appName describe="服务别名">hit-chain-as</appName>
+		<appDescribe describe="发布包说明">现货产品区块链上链服务端</appDescribe>
+		<version describe="发布包版本">2.4.0-ZJSY-SNAPSHOT</version>
+		<packInEffect describe="影响的主包（只有补丁需要配置，填写主包的版本号）"></packInEffect>
+	</basic>
+
+	<!-- 全系统全局参数配置，参数可以包括input(输入框)、select(单选框)、password(密码框)、mselect(多选框)、
+	grid(表格)、hidden(隐藏域) editor(编辑框)-->
+	<globalConfig describe="系统全局配置">
+	</globalConfig>
+
+	<!-- 配置系统包含的部署集群、分片、分布式框架等 -->
+	<subSystems describe="子系统集合">
+		<system id="chain-services" mode="cluster" dependsOn="" type="jar" name="chain-services服务">
+			<repository></repository>
+			<scale maxSize="20" minSize="1" describe="集群规模"></scale>
+			<databases>
+				<database id="wh" title="仓储系统数据库" rolling="true" use_sid="true" host="10.20.38.179" port="1521" type="oracle"
+						  database="hundsun" sourceType="dbServer" characterSet="utf8"
+						  enable="false" backup="false"
+						  varPrefix="wh">
+					<auth user="hit_wh" password="hundsun2020db"></auth>
+					<!--<cipher key="password" algorithm="JRES_DES"/>-->
+					<matchers>
+						<matcher key="label" values="hundsun"/>
+					</matchers>
+				</database>
+				<database id="ws" title="仓单系统数据库" rolling="true" use_sid="true" host="10.20.38.179" port="1521" type="oracle"
+						  database="hundsun" sourceType="dbServer" characterSet="utf8"
+						  enable="false" backup="false"
+						  varPrefix="ws">
+					<auth user="hit_ws" password="hundsun2020db"></auth>
+					<!--<cipher key="password" algorithm="JRES_DES"/>-->
+					<matchers>
+						<matcher key="label" values="hundsun"/>
+					</matchers>
+				</database>
+				<database id="uc" title="会员系统数据库" rolling="true" use_sid="true" host="10.20.38.179" port="1521" type="oracle"
+						  database="hundsun" sourceType="dbServer" characterSet="utf8"
+						  enable="false" backup="false"
+						  varPrefix="uc">
+					<auth user="hit_uc" password="hundsun2020db"></auth>
+					<!--<cipher key="password" algorithm="JRES_DES"/>-->
+					<matchers>
+						<matcher key="label" values="hundsun"/>
+					</matchers>
+				</database>
+			</databases>
+			<!--<services>
+				<service type="ZooKeeper">
+					<matcher key="single"/>
+					<cipher key="svc_zookeeper_password" algorithm="JRES_DES"/>
+				</service>
+				<service type="Redis">
+					<matcher key="single"/>
+					<cipher key="svc_redis_password" algorithm="JRES_DES"/>
+				</service>
+			</services>-->
+
+			<variables describe="子系统参数配置">
+				<field name="base_group" label="基本参数" type="division" visible="true">
+					<field name="user" label="应用运行用户" type="input" tooltip="Linux应用运行用户">hit</field>
+					<field name="workspace" label="应用安装目录" type="input" tooltip="确保运行用户有此目录权限">/home/hit/deploy/chain-app-as/</field>
+					<field name="jvm_args" label="jvm运行参数" type="input" tooltip="-Xmx（最大堆的空间）-Xms（最小堆的空间），可以根据机器配置进行调整">-Xms512m -Xmx512m</field>
+				</field>
+				<field name="rpc_group" label="微服务参数" type="division" fold="true" visible="true">
+					<!--<field name="app_name" label="微服务名称" type="input" tooltip="微服务名称">biz-fee-services</field>
+					<field name="app_group" label="微服务分组" type="input" tooltip="微服务分组">multrust</field>
+					<field name="app_version" label="应用版本" type="input">1.0</field>-->
+					<field name="app_server_port" label="http端口" type="input" validate="Integer">8020</field>
+					<!--<field name="rpc_protocol_port" label="rpc服务端口" type="input" validate="Integer">20005</field>
+					<field name="rpc_protocol_name" label="rpc协议" type="input" visible="false">dubbo</field>
+					<field name="rpc_consumer_timeout" label="rpc调用超时(ms)" type="input" visible="false" validate="Integer" tooltip="rpc服务消费者调用超时时长">30000</field>
+					<field name="rpc_protocol_corethreads" label="核心处理线程数" type="input"  validate="Integer" visible="false">100</field>
+					<field name="rpc_protocol_threads" label="最大处理线程数" type="input"  validate="Integer" visible="false">200</field>
+					<field name="rpc_protocol_alive" label="处理线程空闲时长（毫秒）" type="input"  validate="Integer" required="false" visible="false">60000</field>
+					<field name="rpc_protocol_queues" label="处理队列长度" type="input"  validate="Integer" required="false" visible="false">2000</field>
+					<field name="rpc_monitor_interval" label="监控采集周期（毫秒）" type="input"  validate="Integer" required="false" visible="false">60000</field>-->
+				</field>
+				<field name="log_group" label="日志参数" type="division" fold="true" visible="true">
+					<field name="log_level_sys" label="系统日志级别" type="select" options="info:info;debug:debug;error:error;trace:trace">info</field>
+					<field name="log_level_biz" label="业务日志级别" type="select" options="info:info;debug:debug;error:error;trace:trace">info</field>
+					<field name="log_size" label="日志文件归档大小" type="input" tooltip="归档日志大小，如20MB,1GB" visible="false">100 MB</field>
+					<field name="log_filePrefix" label="日志文件前缀" type="input" required="false" visible="false" ></field>
+					<field name="log_intervalHour" label="日志文件归档周期" type="input" tooltip="归档周期单位小时" validate="Integer">1</field>
+					<field name="log_basedir" label="日志目录" type="input" required="false" visible="false"
+						   tooltip="日志存放路径可以自己指定，默认是在当前应用目录下,如:/home/hit/deploy/chain-app-as/app/logs/(注末尾必须以/结束)">../logs/</field>
+					<field name="log4j2_args" label="log4j2运行参数" type="input" visible="false">
+						-Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -DAsyncLogger.RingBufferSize=262144 -DAsyncLoggerConfig.RingBufferSize=262144 -Dlog4j2.AsyncQueueFullPolicy=Discard
+					</field>
+					<field name="log_pattern" label="日志默认样式" type="input" visible="false">%d{DEFAULT}-%-5level|%thread-[%tid]-[%pid]|%c|%X|--|| %msg||--%n
+					</field>
+				</field>
+				<!--<field name="cache_group" label="缓存优化参数" type="division" fold="true" visible="true">
+					<field name="hs_redis_pool_key_prefix" label="缓存前缀" type="input" required="false">
+						hundsun:multrust:
+					</field>
+					<field name="hs_redis_database" label="dbIndex" type="input"  validate="Integer" required="false">
+						0
+					</field>
+					<field name="hs_redis_time_out" label="缓存超时时间" type="input" validate="Integer" required="true">30000</field>
+					<field name="hs_redis_pool_max_wait" label="最大建立连接等待时间" type="input" validate="Integer" required="true">10000</field>
+					<field name="hs_redis_pool_max_idle" label="最大空闲" type="input" validate="Integer" >10</field>
+					<field name="hs_redis_pool_min_idle" label="最小空闲" type="input" validate="Integer" >5</field>
+					<field name="hs_redis_pool_max_active" label="最大实例个数" type="input" validate="Integer">50</field>
+					<field name="hs_redis_nopass" label="免密模式" type="switch" options="true:是;false:否">false</field>
+				</field>-->
+
+				<field name="jdbc_group" label="数据库参数" type="division" fold="true"  visible="true">
+					<field name="jdbc_url" label="oracleRac集群地址" type="input" tooltip="连接字符串需特殊配置，如双rac配置：jdbc:oracle:thin:@(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = ip)(PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = ip)(PORT = 1521)) (LOAD_BALANCE = yes)(failover=on)(connect_data= (service_name = servicName)))" required="false"></field>
+					<field name="jdbc_minIdle" label="最小空闲连接数" type="input">5</field>
+					<field name="jdbc_maxActive" label="最大连接数" tooltip="0代表没有限制" type="input" required="false">50</field>
+					<field name="jdbc_maxWait" label="最大等待时间" tooltip="-1代表没有限制,单位毫秒" type="input" required="false">60000</field>
+					<field name="jdbc_validationQuery" label="检测连接SQL" type="input" required="false"></field>
+				</field>
+
+				<field name="biz_group" label="业务参数" type="division" fold="true" >
+					<field name="blockchain_pubkey" label="公钥" type="input" required="true">04377f7d07342f55a36c3953d1aec867e40c0ffe083d1a6bc7984bcca426a257721e91808b3db0324a05a2933954f856bfe05d77a4a73359def68f72977efc7541</field>
+					<field name="blockchain_prikey" label="私钥" type="input" required="true">923330e07c0df6d5d64ba8af9b9522470ff122c88e0a2f4981152419d381f79d98dfa2c1628611101a718aadeef88da2</field>
+					<field name="blockchain_address" label="公钥地址" type="input" required="true">b992e4f76c840a37bfdb0e84aae16731435b6dd4</field>
+					<field name="blockchain_pwd" label="密码" type="input" required="true">123456</field>
+					<field name="blockchain_contract_address" label="合约地址" type="input" required="true">0x9e3c23ad5607ff45953f578d580bedf6af6cce75</field>
+					<field name="blockchain_url" label="接口地址" type="input" required="true">http://60.191.15.92:5080/czbbaas</field>
+					<field name="blockchain_version" label="版本号" type="input" required="true">1001</field>
+					<field name="blockchain_channel" label="渠道号" type="input" required="true">02</field>
+					<field name="blockchain_openid" label="openId" type="input" required="true">ZYZX</field>
+					<field name="sms_accept_mobile" label="短信提醒号码" tooltip="多个号码逗号间隔：18111111111,18222222222" type="input" required="false"></field>
+					<field name="sms_warn_times" label="短信提醒次数" type="input" required="true">2</field>
+					<field name="chain_push_times" label="上链异常推送次数" type="input" required="true">10</field>
+					<field name="chain_batch_size" label="上链推送批次数量" type="input" required="true">50</field>
+				</field>
+
+				<field name="others_group" label="其它配置" type="division" fold="true" visible="true">
+					<field type="editor"
+						   name="app_references"
+						   label="自定义配置"
+						   tooltip="多个配置换行，如：app.reference.服务名.group=xxx,\napp.reference.服务名.version=xx"
+						   required="false">
+					</field>
+				</field>
+			</variables>
+
+			<scripts describe="集群脚本集">
+				<script name="install" path="./app/install.sh" describe="部署"/>
+				<script name="start" path="./app/start.sh" describe="启动" />
+				<script name="validateStart" path="./app/validateStart.sh" describe="启动状态检测" />
+				<script name="stop" path="./app/stop.sh" describe="停止" />
+				<script name="validateStop" path="./app/validateStop.sh" describe="停止状态监测" />
+				<script name="beforeInstall" path="./app/beforeInstall.sh" describe="预处理"/>
+				<script name="afterInstall" path="./app/afterInstall.sh" describe="部署后置处理"/>
+				<script name="backup" path="./app/backup.sh" describe="备份"/>
+				<script name="rollback" path="./app/rollback.sh" describe="回滚"/>
+				<script name="uninstall" path="./app/uninstall.sh" describe="卸载"/>
+			</scripts>
+
+			<config path="./app/config/application.properties" encoding="UTF-8" template="./server/application.properties"></config>
+			<config path="./app/config/log4j2.xml" encoding="UTF-8" template="./server/log4j2.xml"></config>
+
+			<config path="./app/install.sh" encoding="UTF-8" template="./server/install.sh"></config>
+			<config path="./app/start.sh" encoding="UTF-8" template="./server/start.sh"></config>
+			<config path="./app/stop.sh" encoding="UTF-8" template="./server/stop.sh"></config>
+			<config path="./app/validateStop.sh" encoding="UTF-8" template="./server/validateStop.sh"></config>
+			<config path="./app/validateStart.sh" encoding="UTF-8" template="./server/validateStart.sh"></config>
+
+			<config path="./app/beforeInstall.sh" encoding="UTF-8" template="./server/beforeInstall.sh"></config>
+			<config path="./app/afterInstall.sh" encoding="UTF-8" template="./server/afterInstall.sh"></config>
+			<config path="./app/backup.sh" encoding="UTF-8" template="./server/backup.sh"></config>
+			<config path="./app/rollback.sh" encoding="UTF-8" template="./server/rollback.sh"></config>
+			<config path="./app/uninstall.sh" encoding="UTF-8" template="./server/uninstall.sh"></config>
+			<node describe="节点私有配置信息"></node>
+		</system>
+	</subSystems>
+</deploy>

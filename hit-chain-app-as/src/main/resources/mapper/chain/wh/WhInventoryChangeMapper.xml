@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundsun.exchange.chain.wh.mapper.WhInventoryChangeDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hundsun.exchange.chain.wh.entity.WhInventoryChange">
+        <id column="ID" property="id" />
+        <result column="INVENTORY_ID" property="inventoryId"/>
+        <result column="VARIETY_CODE" property="varietyCode"/>
+        <result column="VARIETY_NAME" property="varietyName"/>
+        <result column="CHANGE_WEIGHT" property="changeWeight"/>
+        <result column="CHANGE_TYPE" property="changeType"/>
+        <result column="TOTAL_WEIGHT" property="totalWeight"/>
+        <result column="MODEL" property="model"/>
+        <result column="BEFORE_CHANGE_WEIGHT" property="beforeChangeWeight"/>
+        <result column="EXPLANATION" property="explanation"/>
+        <result column="GMT_CREATE" property="gmtCreate"/>
+        <result column="GMT_MODIFY" property="gmtModify"/>
+        <result column="USER_CREATE" property="userCreate"/>
+        <result column="USER_MODIFY" property="userModify"/>
+        <result column="VARIETY_RECEIPT_TYPE" property="varietyReceiptType"/>
+        <result column="VARIETY_ACCOUNT_TYPE" property="varietyAccountType"/>
+        <result column="VARIETY_TYPE" property="varietyType"/>
+        <result column="OWER_COMPANY_ID" property="owerCompanyId" />
+        <result column="OWER_COMPANY_NAME" property="owerCompanyName" />
+        <result column="WAREHOUSE_ID" property="warehouseId" />
+        <result column="WAREHOUSE_NAME" property="warehouseName" />
+        <result column="SOURCE_ID" property="sourceId"/>
+    </resultMap>
+
+    <select id="selectRegionInventoryChange" resultMap="BaseResultMap" parameterType="map">
+        select ID, INVENTORY_ID, CHANGE_WEIGHT, CHANGE_TYPE, TOTAL_WEIGHT, GMT_CREATE, USER_CREATE, USER_MODIFY, OWER_COMPANY_ID, SOURCE_ID from (
+            select t.*, ROWNUM as rn from (
+              select c.ID, c.INVENTORY_ID, c.CHANGE_WEIGHT, c.CHANGE_TYPE, c.TOTAL_WEIGHT, c.GMT_CREATE, c.USER_CREATE, c.USER_MODIFY, c.OWER_COMPANY_ID, c.SOURCE_ID from WH_INVENTORY_CHANGE c
+              where c.ID &gt; #{id} order by c.ID
+            ) t where ROWNUM &lt;= #{size}
+        ) where rn &gt;= 0
+    </select>
+</mapper>

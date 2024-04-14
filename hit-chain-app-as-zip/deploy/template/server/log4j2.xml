@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration >
+
+    <Properties>
+        <Property name="log.home">#if(${log_basedir})$!{log_basedir}#else logs#end</Property>
+        <Property name="log.level">${log_level_sys}</Property>
+        <Property name="log.levelBiz">${log_level_biz}</Property>
+        <Property name="log.size">${log_size}</Property>
+        <Property name="log.filePrefix">$!{log_filePrefix}</Property>
+        <Property name="log.intervalHour">${log_intervalHour}</Property>
+        <Property name="log.rollover.max">100</Property>
+        <property name="DEFAULT_PATTERN" value="${log_pattern}" />
+    </Properties>
+
+    <!-- 第一层 默认所有日志过滤器 -->
+    <!--	<ThresholdFilter>-->
+    <!--		<level>${log.level}</level>-->
+    <!--	</ThresholdFilter>-->
+    <Appenders>
+        <!-- 控制台 appender -->
+        <Console name="console" target="SYSTEM_OUT">
+            <ThresholdFilter>
+                <level>${log.level}</level>
+            </ThresholdFilter>
+            <PatternLayout pattern="${DEFAULT_PATTERN}">
+            </PatternLayout>
+        </Console>
+        <!-- runFile  %d{yyyy-MM-dd}/ -->
+        <RollingRandomAccessFile name="trace" fileName="${log.home}/${log.filePrefix}trace.log" filePattern="${log.home}/%d{yyyy-MM-dd}/trace-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ThresholdFilter>
+                <level>${log.level}</level>
+            </ThresholdFilter>
+            <PatternLayout>
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <!-- 日志超过6个小时生成一个新的日志，旧的归档 -->
+                <TimeBasedTriggeringPolicy interval="${log.intervalHour}" modulate="true"/>
+                <!-- 日志超过100M生成一个新的日志，旧的归档 -->
+                <SizeBasedTriggeringPolicy size="${log.size}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${log.rollover.max}"/>
+        </RollingRandomAccessFile >
+
+        <!-- errorFile-->
+        <RollingRandomAccessFile
+                name="syserr"
+                fileName="${log.home}/${log.filePrefix}syserr.log"
+                filePattern="${log.home}/%d{yyyy-MM-dd}/syserr-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ThresholdFilter>
+                <level>ERROR</level>
+            </ThresholdFilter>
+            <PatternLayout>
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <!-- 日志超过6个小时生成一个新的日志，旧的归档 -->
+                <TimeBasedTriggeringPolicy interval="${log.intervalHour}" modulate="true"/>
+                <!-- 日志超过100M生成一个新的日志，旧的归档 -->
+                <SizeBasedTriggeringPolicy size="${log.size}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${log.rollover.max}"/>
+        </RollingRandomAccessFile>
+
+        <!-- 业务日志 -->
+        <RollingRandomAccessFile
+                name="bizrun"
+                fileName="${log.home}/${log.filePrefix}bizrun.log"
+                filePattern="${log.home}/%d{yyyy-MM-dd}/bizrun-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ThresholdFilter>
+                <level>${log.levelBiz}</level>
+            </ThresholdFilter>
+            <PatternLayout>
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <!-- 日志超过6个小时生成一个新的日志，旧的归档 -->
+                <TimeBasedTriggeringPolicy interval="${log.intervalHour}" modulate="true"/>
+                <!-- 日志超过100M生成一个新的日志，旧的归档 -->
+                <SizeBasedTriggeringPolicy size="${log.size}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${log.rollover.max}"/>
+        </RollingRandomAccessFile >
+        <!-- 业务错误 -->
+        <RollingRandomAccessFile
+                name="bizerr"
+                fileName="${log.home}/${log.filePrefix}bizerr.log"
+                filePattern="${log.home}/%d{yyyy-MM-dd}/bizerr-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <ThresholdFilter>
+                <level>ERROR</level>
+            </ThresholdFilter>
+            <PatternLayout>
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <!-- 日志超过6个小时生成一个新的日志，旧的归档 -->
+                <TimeBasedTriggeringPolicy interval="${log.intervalHour}" modulate="true"/>
+                <!-- 日志超过100M生成一个新的日志，旧的归档 -->
+                <SizeBasedTriggeringPolicy size="${log.size}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${log.rollover.max}"/>
+        </RollingRandomAccessFile >
+
+        <Async name="consoleAsync">
+            <AppenderRef ref="console"/>
+        </Async>
+        <Async name="traceAsync">
+            <AppenderRef ref="trace"/>
+        </Async>
+        <Async name="syserrAsync">
+            <AppenderRef ref="syserr"/>
+        </Async>
+        <Async name="bizrunAsync">
+            <AppenderRef ref="bizrun"/>
+        </Async>
+        <Async name="bizerrAsync">
+            <AppenderRef ref="bizerr"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Root level="${log.level}">
+            <AppenderRef ref="consoleAsync"/>
+            <AppenderRef ref="traceAsync"/>
+            <AppenderRef ref="syserrAsync"/>
+        </Root>
+        <logger name="com.hundsun.jrescloud" level="${log.level}" additivity="false">
+            <AppenderRef ref="consoleAsync"/>
+            <AppenderRef ref="traceAsync"/>
+            <AppenderRef ref="syserrAsync"/>
+        </logger>
+        <logger name="com.hundsun.exchange.chain" level="${log.levelBiz}" additivity="false">
+            <AppenderRef ref="consoleAsync"/>
+            <AppenderRef ref="traceAsync"/>
+            <AppenderRef ref="bizerrAsync"/>
+            <AppenderRef ref="bizrunAsync"/>
+        </logger>
+    </Loggers>
+</Configuration>

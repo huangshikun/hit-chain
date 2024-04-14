@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundsun.exchange.chain.ws.mapper.ReceiptLogDao">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hundsun.exchange.chain.ws.entity.ReceiptLog">
+        <id column="ID" property="id" />
+        <result column="OP_TIME" property="opTime" />
+        <result column="TARGET_TYPE" property="targetType" />
+        <result column="TARGET_ID" property="targetId" />
+        <result column="WR_OPERATOR_ID" property="wrOperatorId" />
+        <result column="OPERATOR_NAME" property="operatorName" />
+        <result column="ACTION" property="action" />
+        <result column="REMARK" property="remark" />
+        <result column="BUSSINESS_TYPE" property="bussinessType" />
+        <result column="CHANGE_WEIGHT" property="changeWeight" />
+        <result column="REG_WEIGHT_BEFORE" property="regWeightBefore" />
+        <result column="FROZEN_WEIGHT_BEFORE" property="frozenWeightBefore" />
+        <result column="FREE_WEIGHT_BEFORE" property="freeWeightBefore" />
+        <result column="REG_WEIGHT_AFTER" property="regWeightAfter" />
+        <result column="FROZEN_WEIGHT_AFTER" property="frozenWeightAfter" />
+        <result column="FREE_WEIGHT_AFTER" property="freeWeightAfter" />
+        <result column="GMT_CREATE" property="gmtCreate"/>
+        <result column="GMT_MODIFY" property="gmtModify"/>
+        <result column="USER_CREATE" property="userCreate"/>
+        <result column="USER_MODIFY" property="userModify"/>
+        <result column="SOURCE_ID" property="sourceId"/>
+    </resultMap>
+
+    <select id="selectRegionReceiptLog" resultMap="BaseResultMap" parameterType="map">
+        select ID, TARGET_ID, CHANGE_WEIGHT, TARGET_TYPE, FREE_WEIGHT_AFTER, GMT_CREATE, USER_CREATE, USER_MODIFY, WR_OPERATOR_ID, SOURCE_ID, ACTION from (
+          select t.*, ROWNUM as rn from (
+            select c.ID, c.TARGET_ID, c.CHANGE_WEIGHT, c.TARGET_TYPE, c.FREE_WEIGHT_AFTER, c.GMT_CREATE, c.USER_CREATE, c.USER_MODIFY, c.WR_OPERATOR_ID, c.SOURCE_ID, c.ACTION from WH_RECEIPT_LOG c
+            where c.ID &gt; #{id} order by c.ID
+          ) t where ROWNUM &lt;= #{size}
+        ) where rn &gt;= 0
+    </select>
+</mapper>

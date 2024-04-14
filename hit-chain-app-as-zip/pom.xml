@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.hundsun.hit</groupId>
+        <artifactId>hit-acm-zip-parent</artifactId>
+        <version>2.4.0-ZJSY-SNAPSHOT</version>
+        <relativePath/><!-- 强制从Maven仓库中查找parent依赖 -->
+    </parent>
+    <artifactId>hit-chain-as-zip</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- 防止war包deploy到Maven仓库包 -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <!-- 应用名称 -->
+        <acm.appName>hit-app</acm.appName>
+        <!-- 唯一标识，目标war包的artifactId -->
+        <acm.artifactId>chain-app-as</acm.artifactId>
+        <!-- 系统时间 -->
+        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hundsun.hit</groupId>
+            <artifactId>hit-app-chain-app-as</artifactId>
+            <version>${project.version}</version>
+            <scope>system</scope>
+            <type>jar</type>
+            <systemPath>${pom.basedir}/../hit-chain-app-as/target/hit-app-chain-app-as-${project.version}.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>hit-virtual</id>
+            <name>hit-virtual Repository</name>
+            <url>http://artifactory.hundsun.com:80/artifactory/hit2.0-mvn-virtual/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>hit-virtual</id>
+            <name>hit-virtual Repository</name>
+            <url>http://artifactory.hundsun.com:80/artifactory/hit2.0-mvn-virtual/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <finalName>${acm.appName}-${acm.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.hundsun.hit</groupId>
+                                    <artifactId>common-acm-resources</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}/deploy-resources</outputDirectory>
+                                    <excludes>META-INF/**</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <!--<descriptor>${project.build.directory}/deploy-resources/assembly-jresplus.xml</descriptor>-->
+                                <descriptor>deploy/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

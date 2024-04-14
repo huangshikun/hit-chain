@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundsun.exchange.chain.ws.mapper.WsChainReceiptLogDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hundsun.exchange.chain.ws.entity.WsChainReceiptLog">
+        <id column="ID" property="id" />
+        <result column="RECEIPT_ID" property="receiptId"/>
+        <result column="TOTAL_WEIGHT" property="totalWeight"/>
+        <result column="CHANGE_WEIGHT" property="changeWeight"/>
+        <result column="OWNER_ID" property="ownerId"/>
+        <result column="OPERATOR_ID" property="operatorId"/>
+        <result column="TRANSACTION_TYPE" property="transactionType"/>
+        <result column="TRANSACTION_DATE" property="transactionDate"/>
+        <result column="ACTION" property="action"/>
+        <result column="PARENT_INVENTORY_ID" property="parentInventoryId"/>
+        <result column="GMT_CREATE" property="gmtCreate"/>
+        <result column="GMT_MODIFY" property="gmtModify"/>
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+</mapper>

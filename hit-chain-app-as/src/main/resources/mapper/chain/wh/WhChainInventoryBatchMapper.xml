@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundsun.exchange.chain.wh.mapper.WhChainInventoryBatchDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hundsun.exchange.chain.wh.entity.WhChainInventoryBatch">
+        <id column="ID" property="id" />
+        <result column="CHAIN_STATUS" property="chainStatus"/>
+        <result column="PUSH_DATE" property="pushDate"/>
+        <result column="PUSH_TIMES" property="pushTimes"/>
+        <result column="WARN_TIMES" property="warnTimes"/>
+        <result column="GMT_CREATE" property="gmtCreate"/>
+        <result column="GMT_MODIFY" property="gmtModify"/>
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <select id="selectLastBatch" resultMap="BaseResultMap">
+        select ID, CHAIN_STATUS, PUSH_TIMES from (
+            select t.*, ROWNUM as rn from (
+                select l.ID, l.CHAIN_STATUS, l.PUSH_TIMES from WH_CHAIN_INVENTORY_BATCH l
+                order by l.ID desc
+            ) t where ROWNUM &lt;= 1
+        ) where rn &gt;= 0
+    </select>
+
+    <select id="selectWarnBatch" resultType="int" parameterType="map">
+        select count(ID) from WH_CHAIN_INVENTORY_BATCH b where b.CHAIN_STATUS = '2' and b.PUSH_DATE = to_number(to_char(sysdate, 'yyyymmdd')) and b.PUSH_TIMES &gt; #{pushTimes} and b.WARN_TIMES &lt; #{warnTimes}
+    </select>
+
+    <update id="updateWarnTimes" parameterType="map">
+        update WH_CHAIN_INVENTORY_BATCH b set b.WARN_TIMES = b.WARN_TIMES + 1 where b.CHAIN_STATUS = '2' and b.PUSH_DATE = to_number(to_char(sysdate, 'yyyymmdd')) and b.PUSH_TIMES &gt; #{pushTimes} and b.WARN_TIMES &lt; #{warnTimes}
+    </update>
+</mapper>

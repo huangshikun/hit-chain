@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundsun.exchange.chain.uc.mapper.MsgMessageInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hundsun.exchange.chain.uc.entity.MsgMessageInfo">
+        <id column="ID" property="id" />
+        <result column="SEND_WAY" property="sendWay"/>
+        <result column="SUBJECT" property="subject"/>
+        <result column="TEMPLATE" property="template"/>
+        <result column="BODY" property="body"/>
+        <result column="DESTINATE" property="destinate"/>
+        <result column="SEND_TIME" property="sendTime"/>
+        <result column="GMT_CREATE" property="gmtCreate" />
+        <result column="GMT_MODIFY" property="gmtModify" />
+        <result column="IS_SEND" property="isSend" />
+        <result column="OPERATE_NAME" property="operateName" />
+        <result column="OPERATE_ID" property="operateId" />
+        <result column="STATUS" property="status" />
+        <result column="TYPE" property="type" />
+        <result column="EXCHANGE_ID" property="exchangeId" />
+        <result column="CONTENT" property="content" />
+    </resultMap>
+</mapper>
